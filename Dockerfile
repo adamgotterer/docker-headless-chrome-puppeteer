@@ -1,4 +1,5 @@
 FROM debian:stretch-slim
+LABEL name="headless-chrome-puppeteer" maintainer="agotterer[at]gmail.com"
 
 ARG DEBIAN_FRONTEND=noninteractive
 ARG CHROMIUM_REVISION
@@ -68,6 +69,7 @@ RUN \
   && unzip /tmp/chrome-linux.zip -d /tmp \
   && mv /tmp/chrome-linux /etc/alternatives/ \
   && ln -s /etc/alternatives/chrome-linux/chrome /bin/google-chrome \
+  && chown -R headless:headless /etc/alternatives/chrome-linux \
   && chown headless:headless /bin/google-chrome \
   && chmod 4775 /bin/google-chrome
 
@@ -76,9 +78,11 @@ RUN apt-get purge --auto-remove -y curl jq wget unzip gnupg2 \
 
 USER headless
 
+EXPOSE 9222
 CMD [ \
     "google-chrome", \
     "--remote-debugging-port=9222", \
+    "--remote-debugging-address=0.0.0.0", \
     "--headless", \
     "--no-sandbox", \
     "--mute-audio", \

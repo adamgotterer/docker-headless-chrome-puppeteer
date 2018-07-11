@@ -1,0 +1,15 @@
+sudo: true
+dist: trusty
+
+jobs:
+  include:
+    - stage: build docker image
+      script:
+      - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+      - puppeteer_version=$(curl -sS https://api.github.com/repos/GoogleChrome/puppeteer/releases/latest | jq -r ".tag_name")
+      - echo $puppeteer_version
+      - chromium_revision=$(curl -sS https://raw.githubusercontent.com/GoogleChrome/puppeteer/$puppeteer_version/package.json | jq -r ".puppeteer.chromium_revision")
+      - echo $chromium_revision
+      - repo="$DOCKER_USERNAME/headless-chrome-puppeteer"
+      - docker build --build-arg CHROMIUM_REVISION=$chromium_revision -t $repo:latest -t $repo:$puppeteer_version .
+      - docker push $repo
