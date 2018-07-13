@@ -11,5 +11,5 @@ jobs:
       - chromium_revision=$(curl -sS https://raw.githubusercontent.com/GoogleChrome/puppeteer/$puppeteer_version/package.json | jq -r ".puppeteer.chromium_revision")
       - echo $chromium_revision
       - repo="$DOCKER_USERNAME/headless-chrome-puppeteer"
-      - docker build --build-arg CHROMIUM_REVISION=$chromium_revision -t $repo:latest -t $repo:$puppeteer_version .
+      - docker build --build-arg CHROMIUM_REVISION=$chromium_revision -t $repo:$puppeteer_version .
       - docker push $repo
